@@ -1,53 +1,86 @@
 import mongoose from "mongoose";
 
-const messageSchema = new mongoose.Schema({
-
-    sender:{
+// Message schema
+const MessageSchema = new mongoose.Schema({
+    sender: {
         type: String,
         enum: ['user', 'admin'],
         required: true
     },
-    content:{
+    content: {
         type: String,
         required: true
     },
     timestamp: {
         type: Date,
-        default: Date.now 
+        default: Date.now
     }
-
-})
+});
 
 // Define the schema for the report
-const reportSchema = new mongoose.Schema({
+const ReportSchema = new mongoose.Schema({
     anonymousCode: {
         type: String,
         required: true,
-        unique: true 
-      },
+        unique: true
+    },
+    department: {
+        type: String,
+        required: true,
+        enum: [
+            'cse', 
+            'eee', 
+            'pharmacy', 
+            'bba', 
+            'english', 
+            'law', 
+            'canteen', 
+            'hostel',
+            'others'
+        ], 
+    },
+    issueType: {
+        type: String,
+        required: true,
+        enum: [
+            'bullying', 
+            'harassment', 
+            'discrimination', 
+            'food-quality', 
+            'infrastructure', 
+            'academic-issues', 
+            'other'
+        ],
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    evidence: {
+        type: [String], 
+    },
     createdAt: {
         type: Date,
-        default: Date.now 
+        default: Date.now,
     },
-    messages: [messageSchema],
-    status :{
-        type : String,
-        enum:['open','closed','in-progress','completed'],
-        default:'open'
+    status: {
+        type: String,
+        default: 'new',
+        enum: ['new', 'in-progress', 'resolved'],
     },
-    lastUpdated: {
-        type: Date,
-        default: Date.now // Tracks when the report was last updated
-      }
+    isEscalated: {
+        type: Boolean,
+        default: false,
+    },
+    messages: [MessageSchema], 
+});
 
-})
-
-reportSchema.pre('save', function (next) {
+ReportSchema.pre('save', function (next) {
     this.lastUpdated = Date.now();
     next();
 });
 
 // Export the report model
-const Report = mongoose.models.Report || mongoose.model("Report", reportSchema);
+const Report = mongoose.models.Report || mongoose.model("Report", ReportSchema);
 
 export default Report;
