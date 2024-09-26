@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'admin'],
+        enum: ['user', 'admin','moderator'],
         default: 'user',
     },
     isAcceptingReport: {
@@ -43,5 +43,5 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
-const UserModel = mongoose.models.User || mongoose.model("User", UserSchema)
+const UserModel = mongoose.models.Users || mongoose.model("Users", UserSchema)
 export default UserModel
